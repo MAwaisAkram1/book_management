@@ -5,8 +5,8 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use App\Http\Requests\LoginRequest;
-use Illuminate\Support\Facades\Hash;
 use App\Models\User;
+use Illuminate\Validation\ValidationException;
 
 class LoginAuthentication
 {
@@ -20,28 +20,22 @@ class LoginAuthentication
     public function handle(Request $request, Closure $next)
     {
         //Form request applying here from the LoginRequest class to check the validation of request parameters.
-        $validatedUser = app(LoginRequest::class)->validated();
 
-        /*
-        |   Check if the requested user email is exist in the database
-        |   after retrieving  the user email from database then fist handle the exception case check weather
-        |   the email provided or password is not matched return the error message
-        */
-        $user = User::where('email', $validatedUser['email'])->first();
-        if (!$user || !Hash::check($validatedUser['password'], $user->password)) {
+        try {
+            $validatedUser = app(LoginRequest::class)->validated();
+        } catch (ValidationException $e) {
             return response()->json([
-               'message' => "User does't Exist",
-                'errors' => $validatedUser->errors(),
-            ]);
+                'message' => $e->errors(),
+            ], 401);
         }
-
+        $token = User::loginUser($validatedUser);
+        
         /*
         |   if the above condition turn false then the else case to generate the access token for the login
         |   User to interact with the application and storing the access_token for the user into
         |   $token and also store into database table.
         |   Merge the user object to the request object so that it can be used in the controller.
         */
-        $token = $user->createToken('authToken')->plainTextToken;
         $request->merge(['token' => $token]);
         return $next($request);
     }

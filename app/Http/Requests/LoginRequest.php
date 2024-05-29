@@ -31,13 +31,4 @@ class LoginRequest extends FormRequest
             'password' => 'required|string',
         ];
     }
-
-    // function to handle the validation error the user provider data in request send error message
-    public function failedValidation(Validator $validator) {
-        $errors = $validator->errors();
-        throw new HttpResponseException(response()->json([
-            'message' => "invalid Credentials",
-            'errors' => $errors,
-        ], 401));
-    }
 }
