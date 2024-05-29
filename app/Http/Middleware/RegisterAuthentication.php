@@ -32,7 +32,7 @@ class RegisterAuthentication
             ], 401);
         }
         $user = User::registerUser($validatedUser);
-        
+
         // Merge the user object to the request object so that it can be used in the controller.
         $request->merge(['user' => $user]);
         return $next($request);

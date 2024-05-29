@@ -54,7 +54,7 @@ class User extends Authenticatable
     public static function loginUser($data) {
         $user = self::where('email', $data['email'])->first();
         if (!$user || !Hash::check($data['password'], $user->password)) {
-            return "Invalid Credentials";
+            return null;
         }
         return $user->createToken('authToken')->plainTextToken;
     }

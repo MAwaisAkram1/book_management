@@ -40,7 +40,7 @@ class StoreBookRequest extends FormRequest
         $errors = $validator->errors();
         throw new HttpResponseException(response()->json([
            'message' => 'Validation Error',
-           'error' => $error,
+           'error' => $errors,
         ], 401));
     }
 }

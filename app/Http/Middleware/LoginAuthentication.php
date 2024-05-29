@@ -21,15 +21,10 @@ class LoginAuthentication
     {
         //Form request applying here from the LoginRequest class to check the validation of request parameters.
 
-        try {
-            $validatedUser = app(LoginRequest::class)->validated();
-        } catch (ValidationException $e) {
-            return response()->json([
-                'message' => $e->errors(),
-            ], 401);
-        }
+
+        $validatedUser = app(LoginRequest::class)->validated();
         $token = User::loginUser($validatedUser);
-        
+
         /*
         |   if the above condition turn false then the else case to generate the access token for the login
         |   User to interact with the application and storing the access_token for the user into

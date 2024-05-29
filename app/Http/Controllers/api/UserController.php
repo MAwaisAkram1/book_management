@@ -26,10 +26,16 @@ class UserController extends Controller
 */
     public function login(Request $request) {
         $token = $request->token;
+        if ($token != null) {
+            return response()->json([
+                'access_token' => $token,
+                'token_type' => 'Bearer-Token',
+            ], 201);
+        }
         return response()->json([
-            'access_token' => $token,
-            'token_type' => 'Bearer-Token',
-        ], 201);
+            'message' => 'Wrong Credentials',
+        ], 401);
+
     }
 
 /*
